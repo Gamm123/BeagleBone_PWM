@@ -5,12 +5,10 @@ Developed by **Mohamed Amine Gam** and **Houssem Guesmi**, this project enables 
 ## Features
 - **Web Interface**: Adjust PWM values (0-100%) to control motor speed.
 - **Real-Time Communication**: Uses Socket.IO for seamless communication.
-- **Input Validation**: Ensures PWM values are within the valid range.
 
 ## Prerequisites
 - **Node.js** and **npm** for running the server.
 - **Socket.IO** for WebSocket communication.
-- **Bash** and permissions to manage PWM on the BeagleBone Black.
 - **Real-Time Kernel** for accurate PWM control.
 
 ## Setup Instructions
