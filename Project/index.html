@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWM Control Interface</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;\n            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #555;
+        }
+        .control-container {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        input[type="range"] {
+            width: 80%;
+            margin: 20px 0;
+        }
+        button {
+            padding: 8px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        #status.success {
+            color: #28a745;
+        }
+        #status.error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>PWM Control Interface</h1>
+    <div class="control-container">
+        <label for="pwmSlider">Adjust PWM Value (0-100):</label><br>
+        <input type="range" id="pwmSlider" min="0" max="100" value="50">
+        <p>Current PWM Value: <span id="pwmValueDisplay">50</span></p>
+        <button id="confirmPwm">Confirm</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        const socket = io();
+
+        const pwmSlider = document.getElementById('pwmSlider');
+        const pwmValueDisplay = document.getElementById('pwmValueDisplay');
+        const confirmButton = document.getElementById('confirmPwm');
+        const statusDisplay = document.getElementById('status');
+
+        let pwmValue = parseInt(pwmSlider.value);
+
+        // Update displayed PWM value as the slider moves
+        pwmSlider.addEventListener('input', () => {
+            pwmValue = parseInt(pwmSlider.value);
+            pwmValueDisplay.textContent = pwmValue;
+        });
+
+        // Send the value to the server when the button is clicked
+        confirmButton.addEventListener('click', () => {
+            socket.emit('change-pwm', pwmValue);
+        });
+
+        // Handle server responses
+        socket.on('success', (message) => {
+            statusDisplay.textContent = message;
+            statusDisplay.className = 'success';
+        });
+
+        socket.on('error', (message) => {
+            statusDisplay.textContent = message;
+            statusDisplay.className = 'error';
+        });
+
+        socket.on('connect_error', () => {
+            statusDisplay.textContent = "Error: Unable to connect to the server.";
+            statusDisplay.className = 'error';
+        });
+    </script>
+</body>
+</html>
